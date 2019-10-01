@@ -157,6 +157,13 @@ class Connection:
         # If there is an error, we'll get it from poll.
         self = weak_self()
 
+        # dead already.
+        # This shouldn't really happen,
+        # but no point throwing a weird error if it does.
+        if self is None:
+            # warnings.warn('aiopg.Connection._shutdown on a deleted connection')
+            return
+
         if self._conn.status == CONN_STATUS_CONNECTING:
             socket_shutdown(ctypes.c_int(self._fileno),
                             ctypes.c_int(socket.SHUT_RDWR))
